@@ -1,6 +1,6 @@
 module.exports = {
     lastRequest: '',
-    requestDelay: 60, // seconds
+    requestDelay: 5, // seconds
     checkPossibility: function() {
         if (this.lastRequest == '') {
             const now = new Date()
