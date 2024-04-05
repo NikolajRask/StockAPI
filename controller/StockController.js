@@ -1,6 +1,7 @@
 const cheerio = require("cheerio")
 const axios = require("axios");
 const { json } = require("express");
+const fs = require('fs')
 
 
 module.exports = {
@@ -31,7 +32,13 @@ module.exports = {
 
     // parsing the HTML source of the target web page with Cheerio
     const targetSelector = '#quote-header-info > div.My\\(6px\\).Pos\\(r\\).smartphone_Mt\\(6px\\).W\\(100\\%\\) > div.D\\(ib\\).Va\\(m\\).Maw\\(65\\%\\).Ov\\(h\\) > div > fin-streamer.Fw\\(b\\).Fz\\(36px\\).Mb\\(-4px\\).D\\(ib\\)';
+    
+    if ($(targetSelector).text() == "") {
+        return {error: 404, errorMessage: "No stock found"}
+    }
+    
     stockInfo.price = $(targetSelector).text()
+    
 
     const targetSelector7 = '#quote-header-info > div.My\\(6px\\).Pos\\(r\\).smartphone_Mt\\(6px\\).W\\(100\\%\\) > div.D\\(ib\\).Va\\(m\\).Maw\\(65\\%\\).Ov\\(h\\) > div.Fz\\(12px\\).C\\(\\$tertiaryColor\\).My\\(0px\\).D\\(ib\\).Va\\(b\\) > fin-streamer.C\\(\\$primaryColor\\).Fz\\(24px\\).Fw\\(b\\)';
     stockInfo.afterHoursPrice = $(targetSelector7).text()
@@ -85,6 +92,20 @@ module.exports = {
         stockInfo.growthNext5Y = "N/A"
     }
 
+    const axiosResponse3 = await axios.request({
+        method: "GET",
+        url: "https://finance.yahoo.com/quote/"+symbol+"/profile",
+        headers: {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+        }
+    })
+    
+    const $3 = cheerio.load(axiosResponse2.data)
+
+    const targetSelector10 = '#Col1-0-Profile-Proxy > section > div.asset-profile-container > div > div > p.D\(ib\).Va\(t\) > span:nth-child(8) > span';
+    
+    stockInfo.profile.employees = $3(targetSelector10).text().replace(",","")
+
     return stockInfo
 
     },
@@ -120,42 +141,21 @@ module.exports = {
         return stockInfo
     },
 
-    getIndex: async function () {
 
-        const axiosResponse = await axios.request({
-            method: "GET",
-            url: "https://www.slickcharts.com/sp500",
-            headers: {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
-            }
-        })   
+    getHistoricalData: async (symbol) => {
+        try {     
+            // Step 4: Download the CSV file
+            const response = await axios({
+              method: 'GET',
+              url: "https://query1.finance.yahoo.com/v7/finance/download/"+symbol+"?period1=1680670353&period2=1712292753&interval=1d&events=history&includeAdjustedClose=true",
+              responseType: 'text'
+            });
+            
+            return response.data
         
-        const stockInfo = {}
-        const $ = cheerio.load(axiosResponse.data)
-
-        const targetSelector = 'body > div.container-fluid.maxWidth > div:nth-child(2) > div.col-lg-7 > div > div > table > tbody';
+          } catch (error) {
+            console.error('An error occurred:', error.message);
+          }
         
-        let jsonReturn = []
-        $(targetSelector).map((_, index) => {
-            jsonReturn = ($(index).text().split('\n'))  
-        })
-
-        for (let i = 0; i < jsonReturn.length; i++) {
-            if (jsonReturn[i].trim() == '') {
-                jsonReturn.splice(i, 1);
-            }
-        }
-
-        let jsonReturn2 = []
-        for (let i = 0; i < 500; i++) {
-            jsonReturn2.push({
-                number: jsonReturn[1+(8*i)].trim(),
-                name: jsonReturn[2+(i*8)].trim(),
-                symbol: jsonReturn[3+(i*8)].trim(),
-                percentage: jsonReturn[4+(i*8)].trim(),
-            })
-        }
-
-        return jsonReturn2;
     }
 }
