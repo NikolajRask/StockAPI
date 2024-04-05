@@ -100,11 +100,17 @@ module.exports = {
         }
     })
     
-    const $3 = cheerio.load(axiosResponse2.data)
+    const $3 = cheerio.load(axiosResponse3.data)
 
-    const targetSelector10 = '#Col1-0-Profile-Proxy > section > div.asset-profile-container > div > div > p.D\(ib\).Va\(t\) > span:nth-child(8) > span';
+    const targetSelector10 = '#Col1-0-Profile-Proxy > section > div.asset-profile-container > div > div > p.D\\(ib\\).Va\\(t\\) > span:nth-child(8) > span';
+
+
+
+    stockInfo.profile = {
+        
+        employees: parseFloat($3(targetSelector10).text().replace(",",""))
     
-    stockInfo.profile.employees = $3(targetSelector10).text().replace(",","")
+    }
 
     return stockInfo
 
