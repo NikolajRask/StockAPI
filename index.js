@@ -2,9 +2,10 @@ const StockController = require('./controller/StockController')
 const RequestController = require('./controller/RequestController')
         
 const express = require('express')
+const cors = require('cors')
 const app = express()
 const port = 4000
-
+   
 
 app.get('/v1/stock/:id', async (req, res) => {
     const Possibility = RequestController.checkPossibility()
@@ -31,6 +32,13 @@ app.get('/v1/:id', async (req, res) => {
 
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', 'attachment; filename="historical_data.csv"');
+    res.send(data)
+    
+})
+
+app.get('/v1/bs/:id', async (req, res) => {
+    const data = await StockController.getBalanceSheet(req.params.id)
+
     res.send(data)
     
 })
