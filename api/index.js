@@ -24,7 +24,7 @@ app.get('/v1/stock/:id', async (req, res) => {
 })
 
 app.get('/v1/sp500', async (req, res) => {
-    const data = fs.readFileSync('sp500.json',
+    const data = fs.readFileSync('./sp500.json',
     { encoding: 'utf8'});
 
     res.send(data)
