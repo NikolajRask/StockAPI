@@ -173,10 +173,4 @@ module.exports = {
         
     },
 
-    getIndex: async () => {
-        const data = fs.readFileSync('sp500.json',
-        { encoding: 'utf8'});
-
-        return JSON.parse(data);
-    }
 }

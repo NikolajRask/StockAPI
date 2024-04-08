@@ -23,8 +23,10 @@ app.get('/v1/stock/:id', async (req, res) => {
 })
 
 app.get('/v1/sp500', async (req, res) => {
-    const json = await StockController.getIndex()
-    res.send(json)
+    const data = fs.readFileSync('sp500.json',
+    { encoding: 'utf8'});
+
+    res.send(data)
 }) 
 
 app.get('/v1/:id', async (req, res) => {
