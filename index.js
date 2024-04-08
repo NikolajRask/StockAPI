@@ -22,7 +22,7 @@ app.get('/v1/stock/:id', async (req, res) => {
 })
 
 app.get('/v1/sp500', async (req, res) => {
-    const json = await StockController.getIndex(req.params.id)
+    const json = await StockController.getIndex()
     res.send(json)
 }) 
 
@@ -34,6 +34,7 @@ app.get('/v1/:id', async (req, res) => {
     res.send(data)
     
 })
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

@@ -163,5 +163,12 @@ module.exports = {
             console.error('An error occurred:', error.message);
           }
         
+    },
+
+    getIndex: async () => {
+        const data = fs.readFileSync('indexes/sp500.json',
+        { encoding: 'utf8'});
+
+        return JSON.parse(data);
     }
 }
