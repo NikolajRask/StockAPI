@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
+    "start": "node --max-http-header-size 15000 api/index.js",
     "vercel-build": "echo hello"
   },
   "keywords": [],

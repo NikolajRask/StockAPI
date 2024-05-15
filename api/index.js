@@ -3016,12 +3016,13 @@ app.get('/v1/stock/:id', async (req, res) => {
     const Possibility = RequestController.checkPossibility()
     if (Possibility[0] == true) {
         const json = await StockController.getAllInfo(req.params.id)
-        if (json.error == 404) {
-            res.send(json)
-        } else {
-            const json2 = await StockController.getStaticstics(req.params.id)
-            res.send([json, json2])
-        }
+		res.send(json)
+        // if (json.error == 404) {
+        //     res.send(json)
+        // } else {
+        //     const json2 = await StockController.getStaticstics(req.params.id)
+        //     res.send([json, json2])
+        // }
     } else {
         res.send({title: "API Cooldown", cooldown: Possibility[1], message: `Wait ${Possibility[1]/1000} seconds before making a new API call`})
     }
